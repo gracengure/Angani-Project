@@ -1,30 +1,38 @@
- export const API_BASE = "https://api.weather-ai.co/v1/weather";
-export const API_KEY = process.env.NEXT_PUBLIC_WEATHERAI_API_KEY;
 import { NextRequest, NextResponse } from 'next/server';
+
+const API_BASE = 'https://api.weather-ai.co/v1/weather';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  
+  const apiKey = process.env.NEXT_PUBLIC_WEATHERAI_API_KEY;
+
+  if (!apiKey) {
+    return NextResponse.json({ error: "API key is not configured" }, { status: 500 });
+  }
+
   try {
-    const res = await fetch(`${API_BASE}?${searchParams.toString()}`, {
+    const response = await fetch(`${API_BASE}?${searchParams.toString()}`, {
       headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_WEATHERAI_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
       },
-      cache: 'no-store',        // or 'force-cache' if you want caching
+      cache: 'no-store',
     });
 
-    if (!res.ok) {
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => "");
+      console.error("WeatherAPI Error:", response.status, errorText);
       return NextResponse.json(
-        { error: `WeatherAPI error: ${res.status}` },
-        { status: res.status }
+        { error: `Weather API returned ${response.status}` },
+        { status: response.status }
       );
     }
 
-    const data = await res.json();
+    const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
+    console.error("Fetch error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch weather data' },
+      { error: "Failed to fetch weather data" },
       { status: 500 }
     );
   }

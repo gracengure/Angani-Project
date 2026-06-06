@@ -1,6 +1,5 @@
 import  {CityWeather } from "@/types/weather";
 import { cities } from "@/types/cities";
-import { API_BASE, API_KEY } from "@/app/api/weather/route";
 import mapToCityWeather from "@/lib/weatherMapping";
 
 export async function getCityWeather(cityId: string, unit: "C" | "F" = "C"): Promise<CityWeather> {
