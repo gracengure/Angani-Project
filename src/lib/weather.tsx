@@ -1,6 +1,6 @@
 import  {CityWeather } from "@/types/weather";
 import { cities } from "@/types/cities";
-import { API_BASE, API_KEY } from "@/api/api";
+import { API_BASE, API_KEY } from "@/app/api/weather/route";
 import mapToCityWeather from "@/lib/weatherMapping";
 
 export async function getCityWeather(cityId: string, unit: "C" | "F" = "C"): Promise<CityWeather> {
@@ -15,14 +15,19 @@ export async function getCityWeather(cityId: string, unit: "C" | "F" = "C"): Pro
     ai: "true",
   });
 
-  const res = await fetch(`${API_BASE}?${params}`, {
-    headers: { Authorization: `Bearer ${API_KEY}` },
-    next: { revalidate: 900 },
+  // Call our own proxy instead of the external API directly
+  const res = await fetch(`/api/weather?${params}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    next: { revalidate: 900 }, // 15 minutes
   });
 
-  if (!res.ok) throw new Error(`Failed to fetch weather`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch weather: ${res.status}`);
+  }
 
   const data = await res.json();
   return mapToCityWeather(data, cityId);
 }
-
