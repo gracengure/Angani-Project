@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { HourlyForecast } from "@/lib/weather";
-import { formatHour, formatTemp, type TempUnit } from "@/lib/utils";
+import type { HourlyForecast } from "@/types/weather";
+import { formatHour,  type TempUnit } from "@/lib/utils";
 
 interface HourlyChartProps {
   hourly: HourlyForecast[];

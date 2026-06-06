@@ -1,6 +1,6 @@
 "use client";
 
-import type { DailyForecast } from "@/lib/weather";
+import type { DailyForecast } from "@/types/weather";
 import { formatTemp, type TempUnit } from "@/lib/utils";
 
 interface SevenDayForecastProps {
